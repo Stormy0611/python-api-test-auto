@@ -46,9 +46,21 @@ review = {
 get_x_all_review = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/",
   "type": "array",
-  "items": [
-      review
-  ],
+  "items": review,
+}
+
+# /user/photo
+url = {
+  "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/URL",  
+  "type": "object",
+  "properties": {
+      "url": {
+          "type": "string"
+      }
+  },
+  "required": [
+      'url'
+  ]
 }
 
 # 
@@ -85,9 +97,7 @@ payment_method = {
       "id": {
           "type": "string",
       },
-      "card": {
-        card    
-      }
+      "card": card
   },
   "required": [
       "id"
@@ -98,9 +108,7 @@ payment_method = {
 get_x_all_payment_method = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/",
   "type": "array",
-  "items": [
-      payment_method
-  ],
+  "items": payment_method
 }
 
 # /provider/account_status
@@ -118,6 +126,7 @@ account_status = {
 }
 
 # /provider/account_link
+# /provider/add_account
 account_link = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/AccountLink",
   "type": "object",
@@ -145,36 +154,38 @@ account_link = {
 
 # /user/{user_id}
 # /user
+# /signup
+# /login
 user = {
-  "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/User",
+  
   "type": "object",
   "properties": {
     "id": {
       "type": "string",
     },
     "username": {
-      "type": "string",
+      "type": ["string", "null"],
     },
     "email": {
-      "type": "integer",
+      "type": ["string", "null"],
     },
     "user_type": {
       "type": "string",
     },
     "description": {
-      "type": "string",
+      "type": ["string", "null"],
     },
     "phone": {
-      "type": "string",
+      "type": ["string", "null"],
     },
     "lat": {
-      "type": "number",
+      "type": ["number", "null"],
     },
     "lng": {
-      "type": "number",
+      "type": ["number", "null"],
     },
     "img_url": {
-      "type": "string",
+      "type": ["string", "null"],
     },
     "created_at": {
       "type": "string",
@@ -190,6 +201,20 @@ user = {
 # /
 # /check
 # /listing/{listing_id}/availability
+# /reset
+# /thread/{thread_id}/read
+# /notification/{notification_id}/read
+# /logout
+# DELETE /review/{review_id}
+# DELETE /user/payment_method/{payment_method_id}
+# DELETE /appointment/{appointment_id}/item/{appointment_item_id}
+# DELETE /item/{listing_item_id}
+# DELETE /blog/{blog_id}
+# DELETE /listing/{listing_id}/schedule/override/{override_id}
+# DELETE /bookmark/{bookmark_id}
+# DELETE /listing/{listing_id}
+# DELETE /listing/{listing_id}/tag/{listing_tag_id}
+# DELETE /listing/tag/{user_tag_id}
 empty_response = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/EmptyResponse",
   "type": "object",
@@ -197,7 +222,7 @@ empty_response = {
   }
 }
 
-# 
+# /listing/{listing_id}/tag
 listing_tag = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/ListingTag",  
   "type": "object",
@@ -251,7 +276,8 @@ appointment_provider = {
   ]
 }
 
-#
+# /listing/{listing_id}
+# POST /listing
 listing = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/Listing",  
   "type": "object",
@@ -276,15 +302,11 @@ listing = {
       },
       "tags": {
           "type": "array",
-          "items": [
-              listing_tag
-          ]
+          "items": listing_tag
       },
       "provider": {
           "type": "array",
-          "items": [
-              appointment_provider
-          ]
+          "items": appointment_provider
       },
       "rating": {
           "type": "number"
@@ -310,7 +332,43 @@ listing = {
   ]
 }
 
+# /item/{listing_item_id}
+# /item
+listing_item = {
+  "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/ListingItem",  
+  "type": "object",
+  "properties": {
+      "id": {
+          "type": "string"
+      },
+      "listing_id": {
+          "type": "string"
+      },
+      "name": {
+          "type": "string"
+      },
+      "price": {
+          "type": "integer"
+      },
+      "description": {
+          "type": "string"
+      },
+      "created_at": {
+          "type": "string"
+      },
+  },
+  "required": [
+      "id",
+      "listing_id",
+      "name",
+      "price",
+      "description",
+      "created_at",
+  ]
+}
+
 # /appointment/{appointment_id}/item/{appointment_item_id}
+# POST /appointment/{appointment_id}/item
 appointment_item = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/AppointmentItem",  
   "type": "object",
@@ -324,10 +382,51 @@ appointment_item = {
       "listing_item_id": {
           "type": "string"
       },
-  }
+      "quantity": {
+          "type": "integer"
+      },
+      "notes": {
+          "type": "string"
+      },
+      "listing_item": listing_item,
+      "created_at": {
+          "type": "string"
+      },
+  },
+  "required": [
+      "id",
+      "appointment_id",
+      "listing_item_id",
+      "listing_item",
+      "created_at",
+  ]
+}
+
+#
+appointment_client = {
+     "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/AppointmentClient",
+     "type": "object",
+     "properties": {
+        "username": {
+            "type": "string"
+        },
+        "img_url": {
+            "type": "string"
+        },
+     },
+     "required": [
+        "username"
+     ]
 }
 
 # /appointment/{id}
+# /appointment/{appointment_id}
+# /appointment/{appointment_id}/request
+# /appointment/{appointment_id}/accept
+# /appointment/{appointment_id}/decline
+# /appointment/{appointment_id}/cancel
+# /appointment/{appointment_id}/complete
+# /appointment/draft
 appointment = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/Appointment",
   "type": "object",
@@ -365,77 +464,50 @@ appointment = {
       "listing": listing,
       "items": {
           "type": "array",
-          "items": [
-              appointment_item
-          ]
+          "items": appointment_item
       },
-  }
+      "provider": appointment_provider,
+      "client": appointment_client,
+      "created_at": {
+          "type": "string"
+      }
+  },
+  "required": [
+      "id",
+      "provider_id",
+      "provider_username",
+      "client_id",
+      "status",
+      "time",
+      "listing",
+      "client",
+  ]
 }
 
-# /appointment/{appointment_id}/item
+# GET /appointment/{appointment_id}/item
 get_all_appointment_items = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/" ,  
   "type": "array",
-  "items": [
-      appointment_item
-  ]
+  "items": appointment_item
 }
 
 # /appointment
 get_all_appointments = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/" ,
   "type": "array",
-  "items": [
-    appointment
-  ] 
-}
-
-#
-listing_item = {
-  "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/",  
-  "type": "object",
-  "properties": {
-      "id": {
-          "type": "string"
-      },
-      "listing_id": {
-          "type": "string"
-      },
-      "name": {
-          "type": "string"
-      },
-      "price": {
-          "type": "integer"
-      },
-      "description": {
-          "type": "string"
-      },
-      "created_at": {
-          "type": "string"
-      },
-  },
-  "required": [
-      "id",
-      "listing_id",
-      "name",
-      "price",
-      "description",
-      "created_at",
-  ]
+  "items": appointment 
 }
 
 # /listing/{listing_id}/item
 get_all_listing_items = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/",  
   "type": "array",
-  "items": [
-      listing_item
-  ]
+  "items": listing_item
 }
 
-#
+# POST /tag
 tag = {
-  "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/ValidationError",
+  "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/Tag",
   "type": "object",
   "properties": {
       "id": {
@@ -454,9 +526,16 @@ tag = {
   ]
 }
 
+# GET /tag
+get_all_tag = {
+    "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/",
+    "type": "array",
+    "items": tag
+}
+
 #
 location = {
-  "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/ValidationError",
+  "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/Location",
   "type": "object",
   "properties": {
       "lat": {
@@ -502,18 +581,7 @@ location = {
 get_all_location = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/ValidationError",
   "type": "array"  ,
-  "items": [
-      location
-  ]
-}
-
-# /tag
-get_all_tag = {
-  "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/ValidationError",
-  "type": "array",
-  "items": [
-      tag
-  ]
+  "items": location
 }
 
 #
@@ -556,9 +624,7 @@ thread_summary = {
       },
       "recipients": {
           "type": "array",
-          "items": [
-              message_recipient
-          ]
+          "items": message_recipient
       },
       "read": {
           "type": "integer"
@@ -573,7 +639,7 @@ thread_summary = {
   ]
 }
 
-# /thread
+# GET /thread
 thread_list = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/ThreadList",
   "type": "object",
@@ -583,14 +649,16 @@ thread_list = {
       },
       "thread": {
           "type": "array",
-          "items": [
-              thread_summary
-          ]
+          "items": thread_summary
       },
-  }  
+  },
+  "required": [
+      "unread_count",
+      "thread"
+  ]  
 }
 
-#
+# /thread/{thread_id}/message
 message = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/Message",
   "type": "object",
@@ -613,6 +681,7 @@ message = {
 }
 
 # /thread/{thread_id}
+# POST /thread
 thread = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/Thread",
   "type": "object",
@@ -622,17 +691,18 @@ thread = {
       },
       "message": {
           "type": "array",
-          "items": [
-              message
-          ]
+          "items": message
       },
       "recipients": {
           "type": "array",
-          "items": [
-              message_recipient
-          ]
+          "items": message_recipient
       }
-  }  
+  },
+    "required": [
+      "id",
+      "message",
+      "recipients"
+  ]  
 }
 
 #
@@ -662,6 +732,7 @@ notification = {
 }
 
 # /blog/{blog_id}
+# POST /blog
 blog = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/Blog",    
   "type": "object",
@@ -689,13 +760,18 @@ blog = {
   ]
 }
 
+# GET /blog
+get_all_blog = {
+    "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/Blog",    
+    "type": "array",
+    "items": blog
+}
+
 # /notification
 get_x_all_notification = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/",  
   "type": "array",
-  "items": [
-      notification
-  ]
+  "items": notification
 }
 
 #
@@ -751,21 +827,19 @@ override = {
 }
 
 # /listing/{listing_id}/schedule
+# /listing/{listing_id}/schedule/override/{override_id}
+# /listing/{listing_id}/schedule/override
 schedule = {
     "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/Schedule",  
     "type": "object",
     "properties": {
         "schedule": {
             "type": "array",
-            "items": [
-                timeslot
-            ]
+            "items": timeslot
         },
         "override": {
             "type": "array",
-            "items": [
-                override
-            ]
+            "items": override
         }        
     },
     "required": [
@@ -774,7 +848,7 @@ schedule = {
     ]
 }
 
-#
+# POST /bookmark
 bookmark = {
      "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/Bookmark",
      "type": "object",
@@ -804,13 +878,11 @@ bookmark = {
      ]
 }
 
-# /bookmark
+# GET /bookmark
 get_all_bookmark = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/",  
   "type": "array",
-  "item": [
-      bookmark
-  ]
+  "item": bookmark
 }
 
 #
@@ -853,9 +925,7 @@ listing_search_result = {
         },
         "provider": {
           "type": "array",
-          "items": [
-              appointment_provider
-          ]
+          "items": appointment_provider
       },
         "created_at": {
             "type": "string"
@@ -871,25 +941,21 @@ listing_search_result = {
      ]
 }
 
-# /listing
-get_listing_search = {
+# GET /listing
+get_all_listing_search = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/ValidationError",
   "type": "array",
-  "items": [
-      listing_search_result
-  ]  
+  "items": listing_search_result  
 }
 
 # /provider/listing
 get_x_all_listing_provider = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/",  
   "type": "array",
-  "items": [
-      listing
-  ]
+  "items": listing
 }
 
-#
+# /user/payment_method_intent
 stripe_client_secret = {
      "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/StripeClientSecret",
      "type": "object",
@@ -905,7 +971,7 @@ stripe_client_secret = {
 
 #
 body_user_profile_photo_user_photo_post = {
-     "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/BodyUserProfilePhotoUserPhotoPost",
+     "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/Body_user_profile_photo_user_photo_post",
      "type": "object",
      "properties": {
         "file": {
@@ -917,23 +983,6 @@ body_user_profile_photo_user_photo_post = {
      ]
 }
 
-#
-appointment_client = {
-     "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/AppointmentClient",
-     "type": "object",
-     "properties": {
-        "username": {
-            "type": "string"
-        },
-        "img_url": {
-            "type": "string"
-        },
-     },
-     "required": [
-        "username"
-     ]
-}
-
 # 
 validation_error = {
   "$schema": "http://appt-ecs-lb-1016726455.us-east-1.elb.amazonaws.com/openapi.json#/components/shemas/ValidationError",
@@ -941,11 +990,16 @@ validation_error = {
   "properties": {
       "loc": {
           "type": "array",
-          "items": [
-              {
-                  "type": "string" | "integer",
+          "items": {
+                  "anyOf": [
+                      {
+                          "type": "string"
+                      },
+                      {
+                          "type": "integer"
+                      },
+                  ]
               }
-          ]
       },
       "msg": {
           "type": "string"
@@ -968,9 +1022,7 @@ http_validation_error = {
   "properties": {
       "detail": {
           "type": "array",
-          "items": [
-              validation_error
-          ]
+          "items": validation_error
       },
   } 
 }
